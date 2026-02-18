@@ -121,9 +121,8 @@ Page({
       // 关键词搜索
       if (searchKey) {
         const key = searchKey.toLowerCase()
-        const inSource = q.source && q.source.toLowerCase().includes(key)
         const inTags = q.tags && q.tags.some(t => t.toLowerCase().includes(key))
-        if (!inSource && !inTags) {
+        if (!inTags) {
           return false
         }
       }
