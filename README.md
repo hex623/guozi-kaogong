@@ -53,6 +53,28 @@
 | 详情 | 错题详情、复习历史、删除 |
 | 我的 | 考试设置、提醒、数据管理 |
 
+## 🎨 图标配置
+
+项目使用自定义 TabBar 图标，请按以下方式准备图标：
+
+**图标规格：**
+- 尺寸：48x48 像素
+- 格式：PNG
+- 普通状态：灰色 (#999999)
+- 选中状态：深色 (#333333)
+
+**图标文件位置：** `images/`
+- `home.png` / `home-active.png` - 首页
+- `add.png` / `add-active.png` - 录入
+- `review.png` / `review-active.png` - 复习
+- `library.png` / `library-active.png` - 题库
+- `profile.png` / `profile-active.png` - 我的
+
+**获取图标方式：**
+1. [Iconfont](https://www.iconfont.cn/) 搜索对应图标下载
+2. [Feather Icons](https://feathericons.com/) 下载 SVG 后转换
+3. 使用设计工具（Figma/Sketch）自行绘制
+
 ## 🚀 快速开始
 
 ### 1. 环境要求

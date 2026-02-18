@@ -3,7 +3,7 @@
   <!-- 倒计时卡片 -->
   <view class="card countdown-card" wx:if="{{examDate}}">
     <view class="countdown-content">
-      <text class="countdown-label">距离考试还有</text>
+      <text class="countdown-label">{{examName ? '距离' + examName + '还有' : '距离考试还有'}}</text>
       <text class="countdown-number">{{countdownDays}}</text>
       <text class="countdown-unit">天</text>
     </view>

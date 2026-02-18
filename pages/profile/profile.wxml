@@ -16,11 +16,21 @@
   <view class="card">
     <view class="section-title">📅 考试设置</view>
     
-    <view class="setting-item" bindtap="setExamDate">
-      <text class="setting-label">考试日期</text>
-      <text class="setting-value">{{examDate || '未设置'}}</text>
+    <!-- 考试名称 -->
+    <view class="setting-item" bindtap="setExamName">
+      <text class="setting-label">考试名称</text>
+      <text class="setting-value">{{examName || '未设置'}}</text>
       <text class="setting-arrow">></text>
     </view>
+    
+    <!-- 考试日期 - 滚轮选择 -->
+    <picker mode="date" value="{{examDate}}" bindchange="onExamDateChange">
+      <view class="setting-item">
+        <text class="setting-label">考试日期</text>
+        <text class="setting-value">{{examDate || '请选择'}}</text>
+        <text class="setting-arrow">></text>
+      </view>
+    </picker>
     
     <view class="setting-item" wx:if="{{examDate}}">
       <text class="setting-label">倒计时</text>
@@ -37,11 +47,14 @@
       <switch checked="{{reminderEnabled}}" bindchange="toggleReminder" color="#333"/>
     </view>
     
-    <view class="setting-item" wx:if="{{reminderEnabled}}" bindtap="setReminderTime">
-      <text class="setting-label">提醒时间</text>
-      <text class="setting-value">{{reminderTime}}</text>
-      <text class="setting-arrow">></text>
-    </view>
+    <!-- 提醒时间 - 滚轮选择 -->
+    <picker mode="time" value="{{reminderTime}}" bindchange="onReminderTimeChange" wx:if="{{reminderEnabled}}">
+      <view class="setting-item">
+        <text class="setting-label">提醒时间</text>
+        <text class="setting-value">{{reminderTime}}</text>
+        <text class="setting-arrow">></text>
+      </view>
+    </picker>
   </view>
 
   <!-- 数据统计 -->
@@ -92,7 +105,7 @@
     
     <view class="setting-item">
       <text class="setting-label">版本</text>
-      <text class="setting-value">v1.0.0</text>
+      <text class="setting-value">V00.00.02</text>
     </view>
     
     <view class="setting-item" bindtap="showAbout">

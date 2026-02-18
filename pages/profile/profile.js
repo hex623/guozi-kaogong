@@ -4,6 +4,7 @@ const { getCountdown } = require('../../utils/date.js')
 Page({
   data: {
     userInfo: null,
+    examName: '',
     examDate: '',
     countdownDays: 0,
     reminderEnabled: false,
@@ -46,66 +47,64 @@ Page({
   // 加载设置
   loadSettings() {
     const app = getApp()
-    const examDate = app.globalData.examDate || wx.getStorageSync('examDate')
-    const reminderTime = app.globalData.reminderTime || wx.getStorageSync('reminderTime') || '20:00'
+    const examName = wx.getStorageSync('examName') || ''
+    const examDate = wx.getStorageSync('examDate') || ''
+    const reminderTime = wx.getStorageSync('reminderTime') || '20:00'
     const reminderEnabled = wx.getStorageSync('reminderEnabled') || false
     
     const days = getCountdown(examDate)
     
     this.setData({
-      examDate: examDate || '',
+      examName: examName,
+      examDate: examDate,
       countdownDays: days > 0 ? days : 0,
       reminderTime: reminderTime,
       reminderEnabled: reminderEnabled
     })
-  },
-
-  // 设置考试日期
-  setExamDate() {
-    wx.showActionSheet({
-      itemList: ['设置考试日期', '清除考试日期'],
-      success: (res) => {
-        if (res.tapIndex === 0) {
-          this.showDatePicker()
-        } else {
-          const app = getApp()
-          app.globalData.examDate = null
-          wx.removeStorageSync('examDate')
-          this.setData({ examDate: '', countdownDays: 0 })
-        }
-      }
-    })
-  },
-
-  // 显示日期选择器
-  showDatePicker() {
-    // 使用 input 的 date 类型
-    const today = new Date().toISOString().split('T')[0]
     
+    // 更新全局数据
+    app.globalData.examDate = examDate
+  },
+
+  // 设置考试名称
+  setExamName() {
     wx.showModal({
-      title: '设置考试日期',
-      content: '请输入考试日期（格式：2024-12-31）',
+      title: '设置考试名称',
+      content: this.data.examName,
       editable: true,
+      placeholderText: '如：2024国考、省考、事业单位...',
       success: (res) => {
-        if (res.confirm && res.content) {
-          const dateStr = res.content.trim()
-          // 验证日期格式
-          if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-            const app = getApp()
-            app.globalData.examDate = dateStr
-            wx.setStorageSync('examDate', dateStr)
-            
-            const days = getCountdown(dateStr)
-            this.setData({
-              examDate: dateStr,
-              countdownDays: days > 0 ? days : 0
-            })
-          } else {
-            wx.showToast({ title: '日期格式错误', icon: 'none' })
+        if (res.confirm && res.content !== undefined) {
+          const examName = res.content.trim()
+          wx.setStorageSync('examName', examName)
+          this.setData({ examName })
+          
+          // 更新首页显示
+          const app = getApp()
+          if (app.globalData) {
+            app.globalData.examName = examName
           }
         }
       }
     })
+  },
+
+  // 考试日期选择器变化
+  onExamDateChange(e) {
+    const examDate = e.detail.value
+    wx.setStorageSync('examDate', examDate)
+    
+    const days = getCountdown(examDate)
+    this.setData({
+      examDate: examDate,
+      countdownDays: days > 0 ? days : 0
+    })
+    
+    // 更新全局数据
+    const app = getApp()
+    if (app.globalData) {
+      app.globalData.examDate = examDate
+    }
   },
 
   // 切换提醒开关
@@ -123,24 +122,17 @@ Page({
     }
   },
 
-  // 设置提醒时间
-  setReminderTime() {
-    wx.showModal({
-      title: '设置提醒时间',
-      content: '请输入时间（格式：20:00）',
-      editable: true,
-      success: (res) => {
-        if (res.confirm && res.content) {
-          const timeStr = res.content.trim()
-          if (/^\d{2}:\d{2}$/.test(timeStr)) {
-            wx.setStorageSync('reminderTime', timeStr)
-            this.setData({ reminderTime: timeStr })
-          } else {
-            wx.showToast({ title: '时间格式错误', icon: 'none' })
-          }
-        }
-      }
-    })
+  // 提醒时间选择器变化
+  onReminderTimeChange(e) {
+    const reminderTime = e.detail.value
+    wx.setStorageSync('reminderTime', reminderTime)
+    this.setData({ reminderTime })
+    
+    // 更新全局数据
+    const app = getApp()
+    if (app.globalData) {
+      app.globalData.reminderTime = reminderTime
+    }
   },
 
   // 加载统计数据
@@ -172,6 +164,8 @@ Page({
     
     const exportData = {
       exportDate: new Date().toISOString(),
+      examName: this.data.examName,
+      examDate: this.data.examDate,
       questions: questions,
       reviewRecords: reviewRecords
     }
@@ -214,6 +208,8 @@ Page({
     wx.removeStorageSync('questions')
     wx.removeStorageSync('review_records')
     wx.removeStorageSync('checkinRecords')
+    wx.removeStorageSync('examName')
+    wx.removeStorageSync('examDate')
     
     // 初始化空数据
     wx.setStorageSync('questions', [])
@@ -223,6 +219,7 @@ Page({
     wx.hideLoading()
     wx.showToast({ title: '已清空', icon: 'success' })
     
+    this.loadSettings()
     this.loadStats()
   },
 
@@ -230,7 +227,7 @@ Page({
   showAbout() {
     wx.showModal({
       title: '关于郭子考公',
-      content: '郭子考公是一款基于艾宾浩斯遗忘曲线的智能错题本小程序，帮助考公人群高效复习错题。\n\n核心功能：\n• 拍照录入错题\n• 艾宾浩斯遗忘曲线复习提醒\n• 学习数据统计\n\n版本：v1.0.0',
+      content: '郭子考公是一款基于艾宾浩斯遗忘曲线的智能错题本小程序，帮助考公人群高效复习错题。\n\n核心功能：\n• 拍照录入错题\n• 艾宾浩斯遗忘曲线复习提醒\n• 学习数据统计\n\n版本：V00.00.02',
       showCancel: false
     })
   }

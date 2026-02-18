@@ -34,3 +34,8 @@ miniprogram_npm/
 
 # 本地配置
 .env
+.env.local
+.env.*.local
+
+# 云开发配置
+cloudbaserc.json

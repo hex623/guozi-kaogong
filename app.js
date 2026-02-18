@@ -10,6 +10,7 @@ App({
     // 初始化全局数据
     this.globalData = {
       userInfo: null,
+      examName: wx.getStorageSync('examName') || '',
       examDate: wx.getStorageSync('examDate') || null,
       reminderTime: wx.getStorageSync('reminderTime') || '20:00'
     }

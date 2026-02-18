@@ -4,6 +4,7 @@ const { needsReviewToday } = require('../../utils/ebinhause.js')
 
 Page({
   data: {
+    examName: '',
     examDate: '',
     countdownDays: 0,
     stats: {
@@ -34,11 +35,13 @@ Page({
   // 加载考试日期
   loadExamDate() {
     const app = getApp()
+    const examName = wx.getStorageSync('examName') || ''
     const examDate = app.globalData.examDate || wx.getStorageSync('examDate')
     
     if (examDate) {
       const days = getCountdown(examDate)
       this.setData({
+        examName: examName,
         examDate: examDate,
         countdownDays: days > 0 ? days : 0
       })
