@@ -68,16 +68,6 @@
               bindinput="onWrongAnswerInput"/>
   </view>
 
-  <!-- 题目出处 -->
-  <view class="card">
-    <view class="section-title">📚 题目出处</view>
-    
-    <input class="source-input" 
-           placeholder="如：2024国考行测、粉笔模考..."
-           value="{{source}}"
-           bindinput="onSourceInput"/>
-  </view>
-
   <!-- 标签 -->
   <view class="card">
     <view class="section-title">🏷️ 标签</view>

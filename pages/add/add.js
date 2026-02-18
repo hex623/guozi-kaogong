@@ -6,7 +6,6 @@ Page({
     correctAnswer: '',
     correctAnswerImage: '',
     wrongAnswer: '',
-    source: '',
     tags: [],
     selectedTags: [],
     historyTags: [],
@@ -28,7 +27,7 @@ Page({
     }
   },
 
-  // 选择图片
+  // 选择图片并裁剪
   chooseImage() {
     const { photos } = this.data
     const remainCount = 3 - photos.length
@@ -38,10 +37,40 @@ Page({
       mediaType: ['image'],
       sourceType: ['album', 'camera'],
       success: (res) => {
-        const newPhotos = res.tempFiles.map(file => file.tempFilePath)
-        this.setData({
-          photos: [...photos, ...newPhotos]
-        }, this.checkCanSubmit)
+        const tempFiles = res.tempFiles.map(file => file.tempFilePath)
+        
+        // 如果有图片，进行裁剪
+        if (tempFiles.length > 0) {
+          this.cropImages(tempFiles, 0, [])
+        }
+      }
+    })
+  },
+
+  // 递归裁剪图片
+  cropImages(files, index, croppedFiles) {
+    if (index >= files.length) {
+      // 所有图片裁剪完成
+      const { photos } = this.data
+      this.setData({
+        photos: [...photos, ...croppedFiles]
+      }, this.checkCanSubmit)
+      return
+    }
+
+    const file = files[index]
+    
+    wx.cropImage({
+      src: file,
+      cropScale: '16:9', // 16:9 比例，适合题目拍照
+      success: (res) => {
+        croppedFiles.push(res.tempFilePath)
+        this.cropImages(files, index + 1, croppedFiles)
+      },
+      fail: () => {
+        // 裁剪失败（用户取消等），使用原图
+        croppedFiles.push(file)
+        this.cropImages(files, index + 1, croppedFiles)
       }
     })
   },
@@ -109,13 +138,6 @@ Page({
   onWrongAnswerInput(e) {
     this.setData({
       wrongAnswer: e.detail.value
-    })
-  },
-
-  // 输入出处
-  onSourceInput(e) {
-    this.setData({
-      source: e.detail.value
     })
   },
 
@@ -226,7 +248,6 @@ Page({
         correctAnswer: this.data.correctAnswer,
         correctAnswerImage: answerImageUrl,
         wrongAnswer: this.data.wrongAnswer,
-        source: this.data.source,
         tags: this.data.selectedTags,
         addDate: addDate.toISOString(),
         reviewCount: 0,
@@ -282,7 +303,6 @@ Page({
       correctAnswer: '',
       correctAnswerImage: '',
       wrongAnswer: '',
-      source: '',
       selectedTags: [],
       tagInput: '',
       canSubmit: false

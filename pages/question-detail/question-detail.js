@@ -5,7 +5,13 @@ Page({
   data: {
     question: null,
     reviewHistory: [],
-    loading: true
+    loading: true,
+    isEditing: false,
+    editData: {
+      correctAnswer: '',
+      wrongAnswer: '',
+      tags: []
+    }
   },
 
   onLoad(options) {
@@ -29,7 +35,12 @@ Page({
       
       this.setData({
         question: formattedQuestion,
-        loading: false
+        loading: false,
+        editData: {
+          correctAnswer: question.correctAnswer || '',
+          wrongAnswer: question.wrongAnswer || '',
+          tags: question.tags || []
+        }
       })
       
       // 加载复习历史
@@ -71,6 +82,102 @@ Page({
     wx.previewImage({
       urls: [this.data.question.correctAnswerImage]
     })
+  },
+
+  // 进入编辑模式
+  startEdit() {
+    this.setData({
+      isEditing: true
+    })
+  },
+
+  // 取消编辑
+  cancelEdit() {
+    const { question } = this.data
+    this.setData({
+      isEditing: false,
+      editData: {
+        correctAnswer: question.correctAnswer || '',
+        wrongAnswer: question.wrongAnswer || '',
+        tags: question.tags || []
+      }
+    })
+  },
+
+  // 输入正确答案
+  onCorrectAnswerInput(e) {
+    this.setData({
+      'editData.correctAnswer': e.detail.value
+    })
+  },
+
+  // 输入错误答案
+  onWrongAnswerInput(e) {
+    this.setData({
+      'editData.wrongAnswer': e.detail.value
+    })
+  },
+
+  // 添加标签
+  addTag(e) {
+    const tag = e.detail.value.trim()
+    if (!tag) return
+    
+    const { editData } = this.data
+    if (editData.tags.includes(tag)) {
+      wx.showToast({ title: '标签已存在', icon: 'none' })
+      return
+    }
+    if (editData.tags.length >= 5) {
+      wx.showToast({ title: '最多5个标签', icon: 'none' })
+      return
+    }
+    
+    this.setData({
+      'editData.tags': [...editData.tags, tag]
+    })
+  },
+
+  // 移除标签
+  removeTag(e) {
+    const { tag } = e.currentTarget.dataset
+    const { editData } = this.data
+    const newTags = editData.tags.filter(t => t !== tag)
+    this.setData({
+      'editData.tags': newTags
+    })
+  },
+
+  // 保存编辑
+  saveEdit() {
+    const { question, editData } = this.data
+    const questions = wx.getStorageSync('questions') || []
+    
+    const index = questions.findIndex(q => q._id === question._id)
+    if (index > -1) {
+      // 更新数据
+      questions[index].correctAnswer = editData.correctAnswer
+      questions[index].wrongAnswer = editData.wrongAnswer
+      questions[index].tags = editData.tags
+      
+      wx.setStorageSync('questions', questions)
+      
+      // 刷新显示
+      this.setData({
+        isEditing: false,
+        question: {
+          ...question,
+          correctAnswer: editData.correctAnswer,
+          wrongAnswer: editData.wrongAnswer,
+          tags: editData.tags
+        }
+      })
+      
+      wx.showToast({
+        title: '保存成功',
+        icon: 'success'
+      })
+    }
   },
 
   // 删除题目

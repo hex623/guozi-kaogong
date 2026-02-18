@@ -219,3 +219,106 @@
   padding: 100rpx 40rpx;
   color: #999;
 }
+
+/* 编辑模式样式 */
+.edit-section {
+  background: #f9f9f9;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+}
+
+.edit-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 30rpx;
+}
+
+.edit-item {
+  margin-bottom: 30rpx;
+}
+
+.edit-label {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 16rpx;
+  display: block;
+}
+
+.edit-textarea {
+  width: 100%;
+  min-height: 160rpx;
+  padding: 20rpx;
+  background: #fff;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+.edit-hint {
+  font-size: 26rpx;
+  color: #999;
+  padding: 20rpx;
+  background: #f0f0f0;
+  border-radius: 12rpx;
+}
+
+.edit-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.edit-tag {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 12rpx 24rpx;
+  background: #333;
+  color: #fff;
+  border-radius: 30rpx;
+  font-size: 26rpx;
+}
+
+.edit-tag-delete {
+  font-size: 24rpx;
+  opacity: 0.8;
+}
+
+.edit-tag-input {
+  width: 100%;
+  padding: 20rpx;
+  background: #fff;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 40rpx;
+}
+
+.edit-actions button {
+  flex: 1;
+  padding: 24rpx 0;
+  border-radius: 40rpx;
+  font-size: 30rpx;
+  border: none;
+}
+
+.edit-actions button::after {
+  border: none;
+}
+
+.btn-secondary {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.btn-primary {
+  background: #333;
+  color: #fff;
+}

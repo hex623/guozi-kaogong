@@ -9,6 +9,7 @@
       </view>
       
       <view class="detail-actions">
+        <text wx:if="{{!isEditing}}" bindtap="startEdit">✏️</text>
         <text bindtap="deleteQuestion">🗑️</text>
       </view>
     </view>
@@ -21,31 +22,79 @@
              data-url="{{item}}"/>
     </view>
 
-    <!-- 错误答案 -->
-    <view wx:if="{{question.wrongAnswer}}" class="wrong-answer-section">
-      <view class="section-label wrong">❌ 错误答案</view>
-      <text class="answer-content">{{question.wrongAnswer}}</text>
-    </view>
-
-    <!-- 正确答案 -->
-    <view class="correct-answer-section">
-      <view class="section-label correct">✅ 正确答案</view>
-      
-      <text wx:if="{{question.answerType === 'text'}}" class="answer-content">{{question.correctAnswer}}</text>
-      
-      <image wx:if="{{question.answerType === 'image' && question.correctAnswerImage}}"
-             src="{{question.correctAnswerImage}}"
-             mode="widthFix"
-             bindtap="previewAnswerImage"/>
-    </view>
-
-    <!-- 出处和时间 -->
-    <view class="meta-section">
-      <view class="meta-item" wx:if="{{question.source}}">
-        <text class="meta-label">📚 出处</text>
-        <text class="meta-value">{{question.source}}</text>
+    <!-- 查看模式 -->
+    <view wx:if="{{!isEditing}}">
+      <!-- 错误答案 -->
+      <view wx:if="{{question.wrongAnswer}}" class="wrong-answer-section">
+        <view class="section-label wrong">❌ 错误答案</view>
+        <text class="answer-content">{{question.wrongAnswer}}</text>
       </view>
+
+      <!-- 正确答案 -->
+      <view class="correct-answer-section">
+        <view class="section-label correct">✅ 正确答案</view>
+        
+        <text wx:if="{{question.answerType === 'text'}}" class="answer-content">{{question.correctAnswer}}</text>
+        
+        <image wx:if="{{question.answerType === 'image' && question.correctAnswerImage}}"
+               src="{{question.correctAnswerImage}}"
+               mode="widthFix"
+               bindtap="previewAnswerImage"/>
+      </view>
+    </view>
+
+    <!-- 编辑模式 -->
+    <view wx:if="{{isEditing}}" class="edit-section">
+      <view class="edit-title">✏️ 编辑错题</view>
       
+      <!-- 编辑正确答案 -->
+      <view class="edit-item">
+        <text class="edit-label">✅ 正确答案</text>
+        <textarea wx:if="{{question.answerType === 'text'}}"
+                  class="edit-textarea"
+                  value="{{editData.correctAnswer}}"
+                  bindinput="onCorrectAnswerInput"
+                  placeholder="输入正确答案..."/>
+        
+        <view wx:if="{{question.answerType === 'image'}}" class="edit-hint">
+          图片答案不支持修改
+        </view>
+      </view>
+
+      <!-- 编辑错误答案 -->
+      <view class="edit-item">
+        <text class="edit-label">❌ 错误答案</text>
+        <textarea class="edit-textarea"
+                  value="{{editData.wrongAnswer}}"
+                  bindinput="onWrongAnswerInput"
+                  placeholder="记录你当时选错的答案..."/>
+      </view>
+
+      <!-- 编辑标签 -->
+      <view class="edit-item">
+        <text class="edit-label">🏷️ 标签</text>
+        
+        <view class="edit-tags">
+          <view wx:for="{{editData.tags}}" wx:key="*this" class="edit-tag">
+            <text>{{item}}</text>
+            <text class="edit-tag-delete" bindtap="removeTag" data-tag="{{item}}">×</text>
+          </view>
+        </view>
+        
+        <input class="edit-tag-input"
+               placeholder="添加标签"
+               bindconfirm="addTag"/>
+      </view>
+
+      <!-- 编辑按钮 -->
+      <view class="edit-actions">
+        <button class="btn-secondary" bindtap="cancelEdit">取消</button>
+        <button class="btn-primary" bindtap="saveEdit">保存</button>
+      </view>
+    </view>
+
+    <!-- 添加日期 -->
+    <view class="meta-section">
       <view class="meta-item">
         <text class="meta-label">📅 添加日期</text>
         <text class="meta-value">{{question.addDate}}</text>

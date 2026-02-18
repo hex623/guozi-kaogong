@@ -58,7 +58,6 @@
           <text wx:if="{{item.tags.length === 0}}" class="mini-tag empty">未分类</text>
         </view>
         
-        <text class="question-source" wx:if="{{item.source}}">{{item.source}}</text>
         <text class="question-date">{{item.addDate}}</text>
         
         <view class="question-meta">
