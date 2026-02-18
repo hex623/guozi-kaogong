@@ -1,0 +1,99 @@
+/* pages/profile/profile.wxss */
+.user-card {
+  text-align: center;
+  padding: 60rpx 40rpx;
+}
+
+.login-btn {
+  background: #333;
+  color: #fff;
+  border-radius: 40rpx;
+  padding: 24rpx 80rpx;
+  font-size: 32rpx;
+  border: none;
+}
+
+.login-btn::after {
+  border: none;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatar {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  margin-bottom: 20rpx;
+}
+
+.nickname {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+}
+
+.setting-item.danger .setting-label {
+  color: #ff4d4f;
+}
+
+.setting-label {
+  flex: 1;
+  font-size: 30rpx;
+  color: #333;
+}
+
+.setting-value {
+  font-size: 28rpx;
+  color: #999;
+  margin-right: 16rpx;
+}
+
+.setting-value.highlight {
+  color: #ff4d4f;
+  font-weight: 600;
+}
+
+.setting-arrow {
+  font-size: 28rpx;
+  color: #ccc;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20rpx;
+  margin-top: 20rpx;
+}
+
+.stat-box {
+  text-align: center;
+  padding: 20rpx 0;
+}
+
+.stat-value {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #333;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #999;
+}

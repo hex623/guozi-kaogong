@@ -1,0 +1,94 @@
+<!-- pages/index/index.wxml -->
+<view class="container">
+  <!-- 倒计时卡片 -->
+  <view class="card countdown-card" wx:if="{{examDate}}">
+    <view class="countdown-content">
+      <text class="countdown-label">距离考试还有</text>
+      <text class="countdown-number">{{countdownDays}}</text>
+      <text class="countdown-unit">天</text>
+    </view>
+    <view class="countdown-date">考试日期：{{examDate}}</view>
+  </view>
+  
+  <view class="card countdown-card empty" wx:else bindtap="goToProfile">
+    <text class="countdown-hint">点击设置考试日期</text>
+  </view>
+
+  <!-- 核心数据 -->
+  <view class="card stats-card">
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-number">{{stats.total}}</text>
+        <text class="stat-label">总错题</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-number" style="color: #52c41a;">{{stats.mastered}}</text>
+        <text class="stat-label">已掌握</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-number" style="color: #ff4d4f;">{{stats.toReview}}</text>
+        <text class="stat-label">待复习</text>
+      </view>
+    </view>
+    
+    <view class="review-btn-wrapper" wx:if="{{stats.toReview > 0}}">
+      <button class="btn-primary" bindtap="goToReview">
+        开始复习（{{stats.toReview}}道）
+      </button>
+    </view>
+  </view>
+
+  <!-- 今日打卡 -->
+  <view class="card checkin-card">
+    <view class="flex-between">
+      <view>
+        <view class="section-title">📅 连续打卡</view>
+        <view class="checkin-days">
+          <text class="checkin-number">{{streakDays}}</text>
+          <text class="checkin-unit">天</text>
+        </view>
+      </view>
+      <view class="calendar-preview">
+        <view wx:for="{{last7Days}}" wx:key="index" 
+              class="calendar-day {{item.checked ? 'checked' : ''}}">
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 学习趋势 -->
+  <view class="card chart-card">
+    <view class="section-title">📈 近7天复习趋势</view>
+    <view class="trend-chart">
+      <view wx:for="{{trendData}}" wx:key="date" class="trend-bar-wrapper">
+        <view class="trend-bar" style="height: {{item.count * 10}}rpx;"></view>
+        <text class="trend-date">{{item.shortDate}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 标签分布 -->
+  <view class="card tags-card">
+    <view class="section-title">🏷️ 标签分布 TOP5</view>
+    <view class="tag-list">
+      <view wx:for="{{topTags}}" wx:key="name" class="tag-item">
+        <view class="tag-info">
+          <text class="tag-name">{{item.name}}</text>
+          <text class="tag-count">{{item.count}}道</text>
+        </view>
+        <view class="tag-bar-wrapper">
+          <view class="tag-bar" style="width: {{item.percent}}%;"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快速录入 -->
+  <view class="card quick-add-card" bindtap="goToAdd">
+    <view class="quick-add-content">
+      <text class="quick-add-icon">📷</text>
+      <text class="quick-add-text">拍照录入新错题</text>
+      <text class="quick-add-arrow">→</text>
+    </view>
+  </view>
+</view>

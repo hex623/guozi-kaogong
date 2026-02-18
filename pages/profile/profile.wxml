@@ -1,0 +1,103 @@
+<!-- pages/profile/profile.wxml -->
+<view class="container">
+  <!-- 用户信息 -->
+  <view class="card user-card">
+    <button wx:if="{{!userInfo}}" class="login-btn" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo">
+      <text>点击登录</text>
+    </button>
+    
+    <view wx:else class="user-info">
+      <image class="avatar" src="{{userInfo.avatarUrl}}"/>
+      <text class="nickname">{{userInfo.nickName}}</text>
+    </view>
+  </view>
+
+  <!-- 考试设置 -->
+  <view class="card">
+    <view class="section-title">📅 考试设置</view>
+    
+    <view class="setting-item" bindtap="setExamDate">
+      <text class="setting-label">考试日期</text>
+      <text class="setting-value">{{examDate || '未设置'}}</text>
+      <text class="setting-arrow">></text>
+    </view>
+    
+    <view class="setting-item" wx:if="{{examDate}}">
+      <text class="setting-label">倒计时</text>
+      <text class="setting-value highlight">{{countdownDays}} 天</text>
+    </view>
+  </view>
+
+  <!-- 提醒设置 -->
+  <view class="card">
+    <view class="section-title">⏰ 每日提醒</view>
+    
+    <view class="setting-item">
+      <text class="setting-label">开启提醒</text>
+      <switch checked="{{reminderEnabled}}" bindchange="toggleReminder" color="#333"/>
+    </view>
+    
+    <view class="setting-item" wx:if="{{reminderEnabled}}" bindtap="setReminderTime">
+      <text class="setting-label">提醒时间</text>
+      <text class="setting-value">{{reminderTime}}</text>
+      <text class="setting-arrow">></text>
+    </view>
+  </view>
+
+  <!-- 数据统计 -->
+  <view class="card">
+    <view class="section-title">📊 学习统计</view>
+    
+    <view class="stats-grid">
+      <view class="stat-box">
+        <text class="stat-value">{{stats.totalDays}}</text>
+        <text class="stat-label">学习天数</text>
+      </view>
+      
+      <view class="stat-box">
+        <text class="stat-value">{{stats.totalQuestions}}</text>
+        <text class="stat-label">总错题数</text>
+      </view>
+      
+      <view class="stat-box">
+        <text class="stat-value">{{stats.totalReviews}}</text>
+        <text class="stat-label">总复习次数</text>
+      </view>
+      
+      <view class="stat-box">
+        <text class="stat-value">{{stats.masteredCount}}</text>
+        <text class="stat-label">已掌握</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 数据管理 -->
+  <view class="card">
+    <view class="section-title">💾 数据管理</view>
+    
+    <view class="setting-item" bindtap="exportData">
+      <text class="setting-label">导出数据</text>
+      <text class="setting-arrow">></text>
+    </view>
+    
+    <view class="setting-item danger" bindtap="clearAllData">
+      <text class="setting-label">清空所有数据</text>
+      <text class="setting-arrow">></text>
+    </view>
+  </view>
+
+  <!-- 关于 -->
+  <view class="card">
+    <view class="section-title">ℹ️ 关于</view>
+    
+    <view class="setting-item">
+      <text class="setting-label">版本</text>
+      <text class="setting-value">v1.0.0</text>
+    </view>
+    
+    <view class="setting-item" bindtap="showAbout">
+      <text class="setting-label">关于郭子考公</text>
+      <text class="setting-arrow">></text>
+    </view>
+  </view>
+</view>

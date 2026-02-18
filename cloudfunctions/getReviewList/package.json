@@ -1,0 +1,7 @@
+{
+  "name": "getReviewList",
+  "version": "1.0.0",
+  "description": "获取今日复习列表",
+  "main": "index.js",
+  "dependencies": {}
+}

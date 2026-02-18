@@ -1,0 +1,106 @@
+<!--
+此文件为开发者工具生成，生成时间: 2026/2/18下午5:02:39
+使用方法：
+在 /Users/hexu/WeChatProjects/guozi-kaogong/pages/index/index.wxml 引入模板
+
+```
+<import src="index.skeleton.wxml"/>
+<template is="skeleton" wx:if="{{loading}}" />
+```
+
+在 /Users/hexu/WeChatProjects/guozi-kaogong/pages/index/index.wxss 中引入样式
+```
+@import "./index.skeleton.wxss";
+```
+
+更多详细信息可以参考文档：https://developers.weixin.qq.com/miniprogram/dev/devtools/skeleton.html
+-->
+<template name="skeleton">
+  <view class="sk-container">
+    <view class="container">
+      <view class="card countdown-card empty">
+        <text class="countdown-hint sk-transparent sk-text-14-2857-735 sk-text" style="background-position-x: 50%;">点击设置考试日期</text>
+      </view>
+      <view class="card stats-card">
+        <view class="stats-grid">
+          <view class="stat-item">
+            <text class="stat-number sk-transparent sk-text-14-2857-271 sk-text" style="background-position-x: 50%;">0</text>
+            <text class="stat-label sk-transparent sk-text-14-2857-744 sk-text" style="background-position-x: 50%;">总错题</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-number sk-transparent sk-text-14-2857-213 sk-text" style="color: rgb(82, 196, 26); background-position-x: 50%;">0</text>
+            <text class="stat-label sk-transparent sk-text-14-2857-431 sk-text" style="background-position-x: 50%;">已掌握</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-number sk-transparent sk-text-14-2857-562 sk-text" style="color: rgb(255, 77, 79); background-position-x: 50%;">0</text>
+            <text class="stat-label sk-transparent sk-text-14-2857-164 sk-text" style="background-position-x: 50%;">待复习</text>
+          </view>
+        </view>
+      </view>
+      <view class="card checkin-card">
+        <view class="flex-between">
+          <view>
+            <view class="section-title sk-transparent sk-text-14-2857-304 sk-text">📅 连续打卡</view>
+            <view class="checkin-days">
+              <text class="checkin-number sk-transparent sk-text-14-2857-75 sk-text">0</text>
+              <text class="checkin-unit sk-transparent sk-opacity">天</text>
+            </view>
+          </view>
+          <view class="calendar-preview">
+            <view class="calendar-day"></view>
+            <view class="calendar-day"></view>
+            <view class="calendar-day"></view>
+            <view class="calendar-day"></view>
+            <view class="calendar-day"></view>
+            <view class="calendar-day"></view>
+            <view class="calendar-day"></view>
+          </view>
+        </view>
+      </view>
+      <view class="card chart-card">
+        <view class="section-title sk-transparent sk-text-14-2857-69 sk-text">📈 近7天复习趋势</view>
+        <view class="trend-chart">
+          <view class="trend-bar-wrapper">
+            <view class="trend-bar" style="height: 0px;"></view>
+            <text class="trend-date sk-transparent sk-text-14-2857-434 sk-text">02-12</text>
+          </view>
+          <view class="trend-bar-wrapper">
+            <view class="trend-bar" style="height: 0px;"></view>
+            <text class="trend-date sk-transparent sk-text-14-2857-462 sk-text">02-13</text>
+          </view>
+          <view class="trend-bar-wrapper">
+            <view class="trend-bar" style="height: 0px;"></view>
+            <text class="trend-date sk-transparent sk-text-14-2857-191 sk-text">02-14</text>
+          </view>
+          <view class="trend-bar-wrapper">
+            <view class="trend-bar" style="height: 0px;"></view>
+            <text class="trend-date sk-transparent sk-text-14-2857-97 sk-text">02-15</text>
+          </view>
+          <view class="trend-bar-wrapper">
+            <view class="trend-bar" style="height: 0px;"></view>
+            <text class="trend-date sk-transparent sk-text-14-2857-829 sk-text">02-16</text>
+          </view>
+          <view class="trend-bar-wrapper">
+            <view class="trend-bar" style="height: 0px;"></view>
+            <text class="trend-date sk-transparent sk-text-14-2857-584 sk-text">02-17</text>
+          </view>
+          <view class="trend-bar-wrapper">
+            <view class="trend-bar" style="height: 0px;"></view>
+            <text class="trend-date sk-transparent sk-text-14-2857-574 sk-text">02-18</text>
+          </view>
+        </view>
+      </view>
+      <view class="card tags-card">
+        <view class="section-title sk-transparent sk-text-14-2857-587 sk-text">🏷️ 标签分布 TOP5</view>
+        <view class="tag-list"></view>
+      </view>
+      <view class="card quick-add-card">
+        <view class="quick-add-content">
+          <text class="quick-add-icon sk-transparent sk-text-14-2857-813 sk-text">📷</text>
+          <text class="quick-add-text sk-transparent sk-text-14-2857-458 sk-text">拍照录入新错题</text>
+          <text class="quick-add-arrow sk-transparent sk-text-14-2857-682 sk-text">→</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>

@@ -1,0 +1,91 @@
+<!-- pages/library/library.wxml -->
+<view class="container">
+  <!-- 搜索和筛选 -->
+  <view class="filter-bar">
+    <view class="search-box">
+      <input placeholder="搜索题目、出处..." 
+             value="{{searchKey}}"
+             bindinput="onSearchInput"
+             confirm-type="search"
+             bindconfirm="doSearch"/>
+      <text class="search-icon">🔍</text>
+    </view>
+  </view>
+
+  <!-- 标签筛选 -->
+  <view class="tags-filter" wx:if="{{allTags.length > 0}}">
+    <scroll-view scroll-x class="tags-scroll">
+      <view class="tag {{selectedTag === '' ? 'active' : ''}}" bindtap="filterByTag" data-tag="">
+        全部
+      </view>
+      
+      <view wx:for="{{allTags}}" wx:key="*this"
+            class="tag {{selectedTag === item ? 'active' : ''}}"
+            bindtap="filterByTag"
+            data-tag="{{item}}">
+        {{item}}
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 状态筛选 -->
+  <view class="status-filter">
+    <view class="status-tab {{statusFilter === 'all' ? 'active' : ''}}" bindtap="filterByStatus" data-status="all">
+      全部({{statusCounts.all}})
+    </view>
+    <view class="status-tab {{statusFilter === 'learning' ? 'active' : ''}}" bindtap="filterByStatus" data-status="learning">
+      学习中({{statusCounts.learning}})
+    </view>
+    <view class="status-tab {{statusFilter === 'mastered' ? 'active' : ''}}" bindtap="filterByStatus" data-status="mastered">
+      已掌握({{statusCounts.mastered}})
+    </view>
+  </view>
+
+  <!-- 错题列表 -->
+  <view class="question-list">
+    <view wx:for="{{filteredQuestions}}" wx:key="_id" 
+          class="question-item"
+          bindtap="goToDetail"
+          data-id="{{item._id}}">
+      
+      <view class="question-thumb">
+        <image src="{{item.photos[0]}}" mode="aspectFill"/>
+      </view>
+      
+      <view class="question-info">
+        <view class="question-tags-row">
+          <text wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag" class="mini-tag">{{tag}}</text>
+          <text wx:if="{{item.tags.length === 0}}" class="mini-tag empty">未分类</text>
+        </view>
+        
+        <text class="question-source" wx:if="{{item.source}}">{{item.source}}</text>
+        <text class="question-date">{{item.addDate}}</text>
+        
+        <view class="question-meta">
+          <view class="review-progress">
+            <text class="progress-text">复习 {{item.reviewCount || 0}}/5</text>
+            <view class="progress-dots">
+              <view wx:for="{{5}}" wx:key="*this" wx:for-index="idx"
+                    class="dot {{idx < (item.reviewCount || 0) ? 'filled' : ''}}"></view>
+            </view>
+          </view>
+          
+          <view class="status-badge {{item.status}}">
+            {{item.status === 'mastered' ? '已掌握' : '学习中'}}
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:if="{{filteredQuestions.length === 0 && !loading}}" class="empty-state">
+    <view class="empty-icon">📚</view>
+    <text class="empty-text">{{emptyText}}</text>
+  </view>
+
+  <!-- 加载更多 -->
+  <view wx:if="{{hasMore}}" class="load-more">
+    <text bindtap="loadMore">{{loadingMore ? '加载中...' : '加载更多'}}</text>
+  </view>
+</view>

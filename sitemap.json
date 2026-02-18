@@ -1,0 +1,7 @@
+{
+  "description": "郭子考公智能错题本",
+  "rules": [{
+    "action": "allow",
+    "page": "*"
+  }]
+}

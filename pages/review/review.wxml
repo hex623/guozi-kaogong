@@ -1,0 +1,114 @@
+<!-- pages/review/review.wxml -->
+<view class="container">
+  <!-- 今日待复习统计 -->
+  <view class="header-card">
+    <view class="header-content">
+      <view class="review-count">
+        <text class="count-number">{{todayList.length}}</text>
+        <text class="count-label">今日待复习</text>
+      </view>
+      
+      <view class="review-progress" wx:if="{{todayList.length > 0}}">
+        <text class="progress-text">已完成 {{completedCount}}/{{todayList.length}}</text>
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{(completedCount/todayList.length)*100}}%"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:if="{{todayList.length === 0 && !loading}}" class="empty-state">
+    <view class="empty-icon">🎉</view>
+    <text class="empty-title">今日复习已完成</text>
+    <text class="empty-desc">基于艾宾浩斯遗忘曲线，新错题将在第1/2/4/7/15天自动推送</text>
+    
+    <button class="btn-secondary" bindtap="goToAdd">去录入新错题</button>
+  </view>
+
+  <!-- 当前复习题目 -->
+  <view wx:if="{{currentQuestion && !showResult}}" class="review-card">
+    <!-- 题目信息 -->
+    <view class="question-header">
+      <view class="question-meta">
+        <text class="review-stage">第{{currentQuestion.reviewCount + 1}}次复习</text>
+        <text class="question-source" wx:if="{{currentQuestion.source}}">{{currentQuestion.source}}</text>
+      </view>
+      
+      <view class="question-tags" wx:if="{{currentQuestion.tags.length > 0}}">
+        <text wx:for="{{currentQuestion.tags}}" wx:key="*this" class="tag">{{item}}</text>
+      </view>
+    </view>
+
+    <!-- 题目照片 -->
+    <view class="question-images">
+      <image wx:for="{{currentQuestion.photos}}" wx:key="*this"
+             src="{{item}}" mode="widthFix" 
+             bindtap="previewQuestionImage"
+             data-url="{{item}}"/>
+    </view>
+
+    <!-- 错误答案提示 -->
+    <view wx:if="{{currentQuestion.wrongAnswer}}" class="wrong-answer-hint">
+      <text class="hint-label">❌ 上次错选</text>
+      <text class="hint-content">{{currentQuestion.wrongAnswer}}</text>
+    </view>
+
+    <!-- 查看答案按钮 -->
+    <view class="action-area" wx:if="{{!showAnswer}}">
+      <button class="btn-primary btn-large" bindtap="showAnswer">
+        查看答案
+      </button>
+    </view>
+
+    <!-- 答案区域 -->
+    <view wx:if="{{showAnswer}}" class="answer-section">
+      <view class="answer-label">✅ 正确答案</view>
+      
+      <view wx:if="{{currentQuestion.answerType === 'text'}}" class="answer-text">
+        {{currentQuestion.correctAnswer}}
+      </view>
+      
+      <image wx:if="{{currentQuestion.answerType === 'image' && currentQuestion.correctAnswerImage}}"
+             src="{{currentQuestion.correctAnswerImage}}" 
+             mode="widthFix"
+             class="answer-image"
+             bindtap="previewAnswerImage"/>
+
+      <!-- 掌握程度选择 -->
+      <view class="mastery-section">
+        <text class="mastery-title">掌握程度如何？</text>
+        
+        <view class="mastery-buttons">
+          <button class="btn-mastery btn-forgot" bindtap="markForgot">
+            <text class="btn-icon">😵</text>
+            <text>还需复习</text>
+            <text class="btn-desc">增加复习频率</text>
+          </button>
+          
+          <button class="btn-mastery btn-mastered" bindtap="markMastered"
+                  disabled="{{isSubmitting}}">
+            <text class="btn-icon">✅</text>
+            <text>已掌握</text>
+            <text class="btn-desc">减少推送频率</text>
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 完成状态 -->
+  <view wx:if="{{showResult}}" class="result-card">
+    <view class="result-icon">{{resultIcon}}</view>
+    <text class="result-title">{{resultTitle}}</text>
+    <text class="result-desc">{{resultDesc}}</text>
+    
+    <view class="next-review-info" wx:if="{{nextReviewDate}}">
+      <text>下次复习：{{nextReviewDate}}</text>
+    </view>
+    
+    <button class="btn-primary" bindtap="nextQuestion">
+      {{currentIndex < todayList.length - 1 ? '下一题' : '完成复习'}}
+    </button>
+  </view>
+</view>

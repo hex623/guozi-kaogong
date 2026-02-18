@@ -1,0 +1,95 @@
+<!-- pages/question-detail/question-detail.wxml -->
+<view class="container">
+  <view wx:if="{{question}}" class="detail-card">
+    <!-- 头部信息 -->
+    <view class="detail-header">
+      <view class="detail-tags">
+        <text wx:for="{{question.tags}}" wx:key="*this" class="tag">{{item}}</text>
+        <text wx:if="{{question.tags.length === 0}}" class="tag empty">未分类</text>
+      </view>
+      
+      <view class="detail-actions">
+        <text bindtap="deleteQuestion">🗑️</text>
+      </view>
+    </view>
+
+    <!-- 题目照片 -->
+    <view class="question-images">
+      <image wx:for="{{question.photos}}" wx:key="*this"
+             src="{{item}}" mode="widthFix"
+             bindtap="previewImage"
+             data-url="{{item}}"/>
+    </view>
+
+    <!-- 错误答案 -->
+    <view wx:if="{{question.wrongAnswer}}" class="wrong-answer-section">
+      <view class="section-label wrong">❌ 错误答案</view>
+      <text class="answer-content">{{question.wrongAnswer}}</text>
+    </view>
+
+    <!-- 正确答案 -->
+    <view class="correct-answer-section">
+      <view class="section-label correct">✅ 正确答案</view>
+      
+      <text wx:if="{{question.answerType === 'text'}}" class="answer-content">{{question.correctAnswer}}</text>
+      
+      <image wx:if="{{question.answerType === 'image' && question.correctAnswerImage}}"
+             src="{{question.correctAnswerImage}}"
+             mode="widthFix"
+             bindtap="previewAnswerImage"/>
+    </view>
+
+    <!-- 出处和时间 -->
+    <view class="meta-section">
+      <view class="meta-item" wx:if="{{question.source}}">
+        <text class="meta-label">📚 出处</text>
+        <text class="meta-value">{{question.source}}</text>
+      </view>
+      
+      <view class="meta-item">
+        <text class="meta-label">📅 添加日期</text>
+        <text class="meta-value">{{question.addDate}}</text>
+      </view>
+    </view>
+
+    <!-- 复习历史 -->
+    <view class="review-history-section">
+      <view class="section-title">📈 复习历史</view>
+      
+      <view class="review-timeline">
+        <view wx:for="{{reviewHistory}}" wx:key="_id" class="timeline-item">
+          <view class="timeline-dot {{item.isMastered ? 'mastered' : 'forgot'}}"></view>
+          
+          <view class="timeline-content">
+            <text class="timeline-date">{{item.date}}</text>
+            <text class="timeline-result {{item.isMastered ? 'mastered' : 'forgot'}}">
+              {{item.isMastered ? '已掌握' : '还需复习'}}
+            </text>
+          </view>
+        </view>
+        
+        <view wx:if="{{reviewHistory.length === 0}}" class="empty-history">
+          <text>暂无复习记录</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 状态 -->
+    <view class="status-section">
+      <view class="status-badge {{question.status}}">
+        {{question.status === 'mastered' ? '已掌握' : '学习中'}}
+      </view>      
+      <text wx:if="{{question.status === 'mastered'}}" class="status-text">
+        ✅ 已完成全部5次复习
+      </text>      
+      <text wx:else class="status-text">
+        📚 第 {{question.reviewCount || 0}}/5 次复习
+      </text>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-state">
+    <text>加载中...</text>
+  </view>
+</view>

@@ -1,0 +1,122 @@
+<!-- pages/add/add.wxml -->
+<view class="container">
+  <!-- 照片上传区域 -->
+  <view class="card photo-card">
+    <view class="section-title">📷 题目照片 *</view>
+    
+    <view class="photo-grid">
+      <view wx:for="{{photos}}" wx:key="index" class="photo-item">
+        <image src="{{item}}" mode="aspectFill" bindtap="previewImage" data-index="{{index}}"/>
+        <view class="delete-btn" catchtap="deletePhoto" data-index="{{index}}">×</view>
+      </view>
+      
+      <view wx:if="{{photos.length < 3}}" class="photo-item add-btn" bindtap="chooseImage">
+        <text class="add-icon">+</text>
+        <text class="add-text">添加照片</text>
+      </view>
+    </view>
+    
+    <text class="photo-hint">最多可上传3张照片</text>
+  </view>
+
+  <!-- 答案区域 -->
+  <view class="card">
+    <view class="section-title">✅ 正确答案 *</view>
+    
+    <view class="answer-tabs">
+      <view class="tab {{answerType === 'text' ? 'active' : ''}}" bindtap="switchAnswerType" data-type="text">
+        文字
+      </view>
+      <view class="tab {{answerType === 'image' ? 'active' : ''}}" bindtap="switchAnswerType" data-type="image">
+        图片
+      </view>
+    </view>
+    
+    <!-- 文字答案 -->
+    <textarea wx:if="{{answerType === 'text'}}" 
+              class="answer-textarea" 
+              placeholder="输入正确答案..."
+              value="{{correctAnswer}}"
+              bindinput="onCorrectAnswerInput"/>
+    
+    <!-- 图片答案 -->
+    <view wx:if="{{answerType === 'image'}}" class="answer-photo-wrapper">
+      <image wx:if="{{correctAnswerImage}}" 
+             src="{{correctAnswerImage}}" 
+             mode="aspectFit" 
+             class="answer-photo"
+             bindtap="previewAnswerImage"/>
+      
+      <view wx:else class="photo-item add-btn large" bindtap="chooseAnswerImage">
+        <text class="add-icon">+</text>
+        <text class="add-text">上传答案照片</text>
+      </view>
+      
+      <view wx:if="{{correctAnswerImage}}" class="delete-answer-btn" bindtap="deleteAnswerImage">
+        删除答案图片
+      </view>
+    </view>
+  </view>
+
+  <!-- 错误答案（选填） -->
+  <view class="card">
+    <view class="section-title">❌ 错误答案（选填）</view>
+    
+    <textarea class="answer-textarea" 
+              placeholder="记录你当时选错的答案，方便分析错误原因..."
+              value="{{wrongAnswer}}"
+              bindinput="onWrongAnswerInput"/>
+  </view>
+
+  <!-- 题目出处 -->
+  <view class="card">
+    <view class="section-title">📚 题目出处</view>
+    
+    <input class="source-input" 
+           placeholder="如：2024国考行测、粉笔模考..."
+           value="{{source}}"
+           bindinput="onSourceInput"/>
+  </view>
+
+  <!-- 标签 -->
+  <view class="card">
+    <view class="section-title">🏷️ 标签</view>
+    
+    <view class="tag-input-wrapper">
+      <input class="tag-input" 
+             placeholder="输入标签名称"
+             value="{{tagInput}}"
+             bindinput="onTagInput"
+             bindconfirm="addTag"/>
+      <view class="add-tag-btn" bindtap="addTag">添加</view>
+    </view>
+    
+    <!-- 已选标签 -->
+    <view wx:if="{{selectedTags.length > 0}}" class="selected-tags">
+      <view wx:for="{{selectedTags}}" wx:key="*this" class="tag-item">
+        <text>{{item}}</text>
+        <text class="tag-delete" bindtap="removeTag" data-tag="{{item}}">×</text>
+      </view>
+    </view>
+    
+    <!-- 历史标签 -->
+    <view wx:if="{{historyTags.length > 0}}" class="history-tags">
+      <text class="history-label">历史标签：</text>
+      <view wx:for="{{historyTags}}" wx:key="*this" 
+            class="history-tag {{selectedTags.includes(item) ? 'selected' : ''}}"
+            bindtap="toggleHistoryTag"
+            data-tag="{{item}}">
+        {{item}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-section">
+    <button class="btn-primary {{!canSubmit ? 'disabled' : ''}}" 
+            bindtap="submitQuestion"
+            disabled="{{!canSubmit || isSubmitting}}">
+      {{isSubmitting ? '保存中...' : '保存错题'}}
+    </button>
+  </view>
+</view>
