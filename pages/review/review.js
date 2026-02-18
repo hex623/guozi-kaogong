@@ -23,6 +23,12 @@ Page({
   },
 
   onShow() {
+    // 设置 tabBar 选中状态
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({
+        selected: 2
+      })
+    }
     // 每次显示页面时刷新
     if (!this.data.currentQuestion) {
       this.loadTodayReviewList()

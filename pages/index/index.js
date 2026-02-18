@@ -27,6 +27,12 @@ Page({
   },
 
   onShow() {
+    // 设置 tabBar 选中状态
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({
+        selected: 0
+      })
+    }
     // 每次显示页面时刷新数据
     this.loadStats()
     this.loadCheckinData()
