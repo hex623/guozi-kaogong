@@ -1,0 +1,90 @@
+<view class="container">
+  <!-- 导出选项 -->
+  <view class="export-options">
+    <view class="option-group">
+      <view class="option-label">导出范围</view>
+      <view class="option-buttons">
+        <view class="option-btn {{exportType === 'all' ? 'active' : ''}}" 
+              bindtap="changeExportType" data-type="all">
+          全部错题
+        </view>
+        <view class="option-btn {{exportType === 'learning' ? 'active' : ''}}" 
+              bindtap="changeExportType" data-type="learning">
+          学习中
+        </view>
+        <view class="option-btn {{exportType === 'mastered' ? 'active' : ''}}" 
+              bindtap="changeExportType" data-type="mastered">
+          已掌握
+        </view>
+        <view class="option-btn {{exportType === 'selected' ? 'active' : ''}}" 
+              bindtap="changeExportType" data-type="selected">
+          自选
+        </view>
+      </view>
+    </view>
+
+    <view class="option-group">
+      <view class="option-label">导出格式</view>
+      <view class="option-buttons">
+        <view class="option-btn {{exportMode === 'pdf' ? 'active' : ''}}" 
+              bindtap="changeExportMode" data-mode="pdf">
+          📄 PDF (图片)
+        </view>
+        <view class="option-btn {{exportMode === 'json' ? 'active' : ''}}" 
+              bindtap="changeExportMode" data-mode="json">
+          📋 JSON 数据
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 自选模式下的题目列表 -->
+  <view wx:if="{{exportType === 'selected'}}" class="select-section">
+    <view class="select-header">
+      <text class="select-title">选择要导出的题目</text>
+      <text class="select-all" bindtap="toggleSelectAll">全选</text>
+    </view>
+    
+    <scroll-view scroll-y class="select-list">
+      <view wx:for="{{questions}}" wx:key="_id" 
+            class="select-item {{item.selected ? 'selected' : ''}}"
+            bindtap="toggleSelect"
+            data-id="{{item._id}}">
+        <view class="select-check">
+          <view class="checkbox {{item.selected ? 'checked' : ''}}"></view>
+        </view>
+        <image class="select-thumb" src="{{item.photos[0]}}" mode="aspectFill"/>
+        <view class="select-info">
+          <view class="select-tags">
+            <text wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag" class="tag-mini">{{tag}}</text>
+          </view>
+          <text class="select-date">{{item.addDateStr}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 统计信息 -->
+  <view class="export-stats">
+    <text class="stats-text">共 {{filteredCount}} 道题</text>
+  </view>
+
+  <!-- 生成按钮 -->
+  <view class="export-action">
+    <button class="export-btn {{generating ? 'disabled' : ''}}" 
+            bindtap="startExport"
+            disabled="{{generating}}">
+      {{generating ? '生成中... ' + progress + '%' : '开始导出'}}
+    </button>
+  </view>
+
+  <!-- 隐藏的画布 -->
+  <canvas canvas-id="exportCanvas" 
+          style="width: {{canvasWidth}}px; height: {{canvasHeight}}px; position: fixed; left: -9999px;"/>
+
+  <!-- 预览 -->
+  <view wx:if="{{previewImage}}" class="preview-section">
+    <view class="preview-title">预览</view>
+    <image class="preview-image" src="{{previewImage}}" mode="widthFix"/>
+  </view>
+</view>

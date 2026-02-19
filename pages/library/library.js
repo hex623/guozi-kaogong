@@ -158,6 +158,13 @@ Page({
     })
   },
 
+  // 跳转到导出页面
+  goToExport() {
+    wx.navigateTo({
+      url: '/pages/export/export'
+    })
+  },
+
   // 格式化日期
   formatDate(date) {
     if (!date) return ''

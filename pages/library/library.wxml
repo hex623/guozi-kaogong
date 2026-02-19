@@ -77,6 +77,11 @@
     </view>
   </view>
 
+  <!-- 导出按钮 -->
+  <view wx:if="{{filteredQuestions.length > 0}}" class="export-bar">
+    <button class="export-btn" bindtap="goToExport">📄 导出当前错题</button>
+  </view>
+
   <!-- 空状态 -->
   <view wx:if="{{filteredQuestions.length === 0 && !loading}}" class="empty-state">
     <view class="empty-icon">📚</view>

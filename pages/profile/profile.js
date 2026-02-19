@@ -163,32 +163,8 @@ Page({
 
   // 导出数据
   exportData() {
-    wx.showLoading({ title: '准备导出...' })
-    
-    const questions = wx.getStorageSync('questions') || []
-    const reviewRecords = wx.getStorageSync('review_records') || []
-    
-    const exportData = {
-      exportDate: new Date().toISOString(),
-      examName: this.data.examName,
-      examDate: this.data.examDate,
-      questions: questions,
-      reviewRecords: reviewRecords
-    }
-    
-    const dataStr = JSON.stringify(exportData, null, 2)
-    
-    // 复制到剪贴板
-    wx.setClipboardData({
-      data: dataStr,
-      success: () => {
-        wx.hideLoading()
-        wx.showModal({
-          title: '导出成功',
-          content: '数据已复制到剪贴板，您可以粘贴到文本编辑器中保存',
-          showCancel: false
-        })
-      }
+    wx.navigateTo({
+      url: '/pages/export/export'
     })
   },
 

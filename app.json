@@ -5,7 +5,8 @@
     "pages/review/review",
     "pages/library/library",
     "pages/profile/profile",
-    "pages/question-detail/question-detail"
+    "pages/question-detail/question-detail",
+    "pages/export/export"
   ],
   "window": {
     "backgroundTextStyle": "dark",
