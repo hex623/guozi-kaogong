@@ -228,5 +228,27 @@ Page({
     wx.switchTab({
       url: '/pages/add/add'
     })
+  },
+
+  // 分享给朋友
+  onShareAppMessage() {
+    const { todayList, completedCount } = this.data
+    const total = todayList.length
+    const remaining = total - completedCount
+    
+    let title
+    if (total === 0) {
+      title = '今日复习已完成，郭子考公助你高效备考'
+    } else if (remaining === 0) {
+      title = `今日${total}道错题复习全部完成，继续保持！`
+    } else {
+      title = `今日还有${remaining}道错题待复习，一起来刷题吧`
+    }
+    
+    return {
+      title: title,
+      path: '/pages/review/review',
+      imageUrl: '/images/share-cover.png'
+    }
   }
 })

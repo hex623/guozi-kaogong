@@ -191,5 +191,33 @@ Page({
     wx.switchTab({
       url: '/pages/profile/profile'
     })
+  },
+
+  // 分享给朋友
+  onShareAppMessage() {
+    const { examName, countdownDays, stats } = this.data
+    const title = examName 
+      ? `距离${examName}还有${countdownDays}天，已记录${stats.total}道错题`
+      : '郭子考公 - 智能错题本，助你高效备考'
+    
+    return {
+      title: title,
+      path: '/pages/index/index',
+      imageUrl: '/images/share-cover.png'
+    }
+  },
+
+  // 分享到朋友圈
+  onShareTimeline() {
+    const { examName, countdownDays, stats } = this.data
+    const title = examName 
+      ? `距离${examName}还有${countdownDays}天，已记录${stats.total}道错题`
+      : '郭子考公 - 智能错题本，助你高效备考'
+    
+    return {
+      title: title,
+      query: '',
+      imageUrl: '/images/share-cover.png'
+    }
   }
 })

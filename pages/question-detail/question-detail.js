@@ -216,5 +216,17 @@ Page({
     setTimeout(() => {
       wx.navigateBack()
     }, 1500)
+  },
+
+  // 分享给朋友
+  onShareAppMessage() {
+    const { question } = this.data
+    const tags = question.tags ? question.tags.join('、') : '无标签'
+    
+    return {
+      title: `错题分享：${question.source || '错题'} - ${tags}`,
+      path: `/pages/question-detail/question-detail?id=${question._id}`,
+      imageUrl: question.photos && question.photos[0] ? question.photos[0] : '/images/share-cover.png'
+    }
   }
 })
