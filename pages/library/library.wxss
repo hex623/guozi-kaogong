@@ -1,4 +1,10 @@
 /* pages/library/library.wxss */
+
+/* 容器底部留白 */
+.container {
+  padding-bottom: calc(160rpx + env(safe-area-inset-bottom));
+}
+
 .filter-bar {
   margin-bottom: 20rpx;
 }
@@ -213,7 +219,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 20rpx 40rpx calc(20rpx + env(safe-area-inset-bottom));
+  padding: 20rpx 40rpx 40rpx;
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
   background: #ffffff;
   box-shadow: 0 -4rpx 20rpx rgba(0,0,0,0.05);
 }

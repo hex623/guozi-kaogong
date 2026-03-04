@@ -1,4 +1,10 @@
 /* pages/index/index.wxss */
+
+/* 容器底部留白 */
+.container {
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+}
+
 .countdown-card {
   background: linear-gradient(135deg, #333 0%, #555 100%);
   color: #fff;

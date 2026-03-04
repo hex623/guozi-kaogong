@@ -1,4 +1,10 @@
 /* pages/review/review.wxss */
+
+/* 容器底部留白 */
+.container {
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+}
+
 .header-card {
   background: #333;
   padding: 40rpx 30rpx;

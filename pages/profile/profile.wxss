@@ -1,4 +1,10 @@
 /* pages/profile/profile.wxss */
+
+/* 容器底部留白 */
+.container {
+  padding-bottom: calc(60rpx + env(safe-area-inset-bottom));
+}
+
 .user-card {
   text-align: center;
   padding: 60rpx 40rpx;
