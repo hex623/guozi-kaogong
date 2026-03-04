@@ -121,18 +121,28 @@ Page({
         croppedFiles.push(res.tempFilePath)
         this.cropImages(files, index + 1, croppedFiles)
       },
-      fail: () => {
+      fail: (err) => {
+        console.log('裁剪失败或取消:', err)
         // 裁剪失败（用户取消等），使用原图
         croppedFiles.push(file)
         this.cropImages(files, index + 1, croppedFiles)
       }
     }
     
-    // 如果不是自由裁剪，设置比例
-    if (selectedCropScale !== 'free') {
+    // 根据选择的裁剪比例设置参数
+    // 注意: wx.cropImage 的 cropScale 只支持 '1:1', '4:3', '16:9'
+    // 自由裁剪需要特殊处理
+    if (selectedCropScale === 'free') {
+      // 自由裁剪: 不设置 cropScale，让用户自己调整
+      // 微信会自动进入自由裁剪模式（不锁定比例）
+      // cropScale 参数不传就是自由模式
+    } else if (['1:1', '4:3', '16:9'].includes(selectedCropScale)) {
+      // 固定比例裁剪
       cropParams.cropScale = selectedCropScale
+    } else {
+      // 默认使用 16:9
+      cropParams.cropScale = '16:9'
     }
-    // 如果是自由裁剪，不设置 cropScale 参数
     
     wx.cropImage(cropParams)
   },
