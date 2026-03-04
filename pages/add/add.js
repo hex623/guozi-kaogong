@@ -17,7 +17,7 @@ Page({
       { value: '1:1', label: '1:1 正方形', icon: '□' },
       { value: '4:3', label: '4:3 文档', icon: '▭' },
       { value: '16:9', label: '16:9 宽屏', icon: '▭' },
-      { value: 'free', label: '自由裁剪', icon: '◻' }
+      { value: 'free', label: '原图（不裁剪）', icon: '◻' }
     ],
     selectedCropScale: '16:9', // 默认16:9
     showCropScaleSelector: false
@@ -101,7 +101,7 @@ Page({
   },
 
   // 递归裁剪图片
-  cropImages(files, index, croppedFiles, hasShownError = false) {
+  cropImages(files, index, croppedFiles) {
     if (index >= files.length) {
       // 所有图片裁剪完成
       const { photos } = this.data
@@ -113,43 +113,36 @@ Page({
 
     const file = files[index]
     const { selectedCropScale } = this.data
-    const isFreeCrop = selectedCropScale === 'free'
     
-    // 构建裁剪参数
+    // 原图模式：跳过裁剪，直接使用原图
+    if (selectedCropScale === 'free') {
+      croppedFiles.push(file)
+      this.cropImages(files, index + 1, croppedFiles)
+      return
+    }
+    
+    // 固定比例裁剪: 使用 cropImage
     const cropParams = {
       src: file,
       success: (res) => {
         croppedFiles.push(res.tempFilePath)
-        this.cropImages(files, index + 1, croppedFiles, hasShownError)
+        this.cropImages(files, index + 1, croppedFiles)
       },
       fail: (err) => {
-        console.log('裁剪失败或取消:', err)
-        
-        // 如果是自由裁剪且第一次失败，提示用户
-        if (isFreeCrop && !hasShownError) {
-          wx.showToast({
-            title: '自由裁剪不支持，使用原图',
-            icon: 'none',
-            duration: 2000
-          })
-          this.cropImages(files, index + 1, croppedFiles, true)
-          return
-        }
-        
+        console.log('裁剪取消或失败:', err)
         // 用户取消或失败，使用原图
         croppedFiles.push(file)
-        this.cropImages(files, index + 1, croppedFiles, hasShownError)
+        this.cropImages(files, index + 1, croppedFiles)
       }
     }
     
-    // 根据裁剪模式设置参数
-    if (!isFreeCrop && ['1:1', '4:3', '16:9'].includes(selectedCropScale)) {
-      // 固定比例裁剪
+    // 设置裁剪比例
+    if (['1:1', '4:3', '16:9'].includes(selectedCropScale)) {
       cropParams.cropScale = selectedCropScale
+    } else {
+      cropParams.cropScale = '16:9'
     }
-    // 自由裁剪: 不传 cropScale 参数
     
-    // 调用裁剪
     wx.cropImage(cropParams)
   },
 
