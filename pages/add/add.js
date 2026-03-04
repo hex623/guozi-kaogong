@@ -101,7 +101,7 @@ Page({
   },
 
   // 递归裁剪图片
-  cropImages(files, index, croppedFiles) {
+  cropImages(files, index, croppedFiles, hasShownError = false) {
     if (index >= files.length) {
       // 所有图片裁剪完成
       const { photos } = this.data
@@ -113,37 +113,43 @@ Page({
 
     const file = files[index]
     const { selectedCropScale } = this.data
+    const isFreeCrop = selectedCropScale === 'free'
     
     // 构建裁剪参数
     const cropParams = {
       src: file,
       success: (res) => {
         croppedFiles.push(res.tempFilePath)
-        this.cropImages(files, index + 1, croppedFiles)
+        this.cropImages(files, index + 1, croppedFiles, hasShownError)
       },
       fail: (err) => {
         console.log('裁剪失败或取消:', err)
-        // 裁剪失败（用户取消等），使用原图
+        
+        // 如果是自由裁剪且第一次失败，提示用户
+        if (isFreeCrop && !hasShownError) {
+          wx.showToast({
+            title: '自由裁剪不支持，使用原图',
+            icon: 'none',
+            duration: 2000
+          })
+          this.cropImages(files, index + 1, croppedFiles, true)
+          return
+        }
+        
+        // 用户取消或失败，使用原图
         croppedFiles.push(file)
-        this.cropImages(files, index + 1, croppedFiles)
+        this.cropImages(files, index + 1, croppedFiles, hasShownError)
       }
     }
     
-    // 根据选择的裁剪比例设置参数
-    // 注意: wx.cropImage 的 cropScale 只支持 '1:1', '4:3', '16:9'
-    // 自由裁剪需要特殊处理
-    if (selectedCropScale === 'free') {
-      // 自由裁剪: 不设置 cropScale，让用户自己调整
-      // 微信会自动进入自由裁剪模式（不锁定比例）
-      // cropScale 参数不传就是自由模式
-    } else if (['1:1', '4:3', '16:9'].includes(selectedCropScale)) {
+    // 根据裁剪模式设置参数
+    if (!isFreeCrop && ['1:1', '4:3', '16:9'].includes(selectedCropScale)) {
       // 固定比例裁剪
       cropParams.cropScale = selectedCropScale
-    } else {
-      // 默认使用 16:9
-      cropParams.cropScale = '16:9'
     }
+    // 自由裁剪: 不传 cropScale 参数
     
+    // 调用裁剪
     wx.cropImage(cropParams)
   },
 
