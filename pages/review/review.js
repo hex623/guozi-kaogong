@@ -338,14 +338,8 @@ Page({
   },
 
   quickMark(level) {
+    // 直接标记，不显示答案，显示结果后手动点击下一题
     this.markMasteryLevel(level)
-    setTimeout(() => {
-      if (this.data.currentIndex < this.data.todayList.length - 1) {
-        this.nextQuestion()
-      } else {
-        this.loadTodayReviewList()
-      }
-    }, 800)
   },
 
   // ==================== 重点标记 ====================
