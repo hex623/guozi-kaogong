@@ -11,7 +11,16 @@ Page({
     historyTags: [],
     tagInput: '',
     canSubmit: false,
-    isSubmitting: false
+    isSubmitting: false,
+    // 裁剪比例选项
+    cropScaleOptions: [
+      { value: '1:1', label: '1:1 正方形', icon: '□' },
+      { value: '4:3', label: '4:3 文档', icon: '▭' },
+      { value: '16:9', label: '16:9 宽屏', icon: '▭' },
+      { value: 'free', label: '自由裁剪', icon: '◻' }
+    ],
+    selectedCropScale: '16:9', // 默认16:9
+    showCropScaleSelector: false
   },
 
   onLoad() {
@@ -32,6 +41,14 @@ Page({
     const { photos } = this.data
     const remainCount = 3 - photos.length
     
+    if (remainCount <= 0) {
+      wx.showToast({
+        title: '最多3张图片',
+        icon: 'none'
+      })
+      return
+    }
+    
     wx.chooseMedia({
       count: remainCount,
       mediaType: ['image'],
@@ -47,6 +64,42 @@ Page({
     })
   },
 
+  // 显示/隐藏裁剪比例选择器
+  toggleCropScaleSelector() {
+    this.setData({
+      showCropScaleSelector: !this.data.showCropScaleSelector
+    })
+  },
+
+  // 选择裁剪比例
+  selectCropScale(e) {
+    const { value } = e.currentTarget.dataset
+    this.setData({
+      selectedCropScale: value,
+      showCropScaleSelector: false
+    })
+    
+    // 显示提示
+    const option = this.data.cropScaleOptions.find(opt => opt.value === value)
+    wx.showToast({
+      title: `已选择: ${option ? option.label : value}`,
+      icon: 'none',
+      duration: 1500
+    })
+  },
+
+  // 关闭裁剪比例选择器
+  closeCropScaleSelector() {
+    this.setData({
+      showCropScaleSelector: false
+    })
+  },
+
+  // 阻止冒泡（用于选择器弹窗）
+  preventBubble() {
+    // 什么都不做，只是阻止事件冒泡
+  },
+
   // 递归裁剪图片
   cropImages(files, index, croppedFiles) {
     if (index >= files.length) {
@@ -59,10 +112,11 @@ Page({
     }
 
     const file = files[index]
+    const { selectedCropScale } = this.data
     
-    wx.cropImage({
+    // 构建裁剪参数
+    const cropParams = {
       src: file,
-      cropScale: '16:9', // 16:9 比例，适合题目拍照
       success: (res) => {
         croppedFiles.push(res.tempFilePath)
         this.cropImages(files, index + 1, croppedFiles)
@@ -72,7 +126,15 @@ Page({
         croppedFiles.push(file)
         this.cropImages(files, index + 1, croppedFiles)
       }
-    })
+    }
+    
+    // 如果不是自由裁剪，设置比例
+    if (selectedCropScale !== 'free') {
+      cropParams.cropScale = selectedCropScale
+    }
+    // 如果是自由裁剪，不设置 cropScale 参数
+    
+    wx.cropImage(cropParams)
   },
 
   // 预览图片

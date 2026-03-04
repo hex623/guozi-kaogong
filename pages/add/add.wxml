@@ -4,6 +4,29 @@
   <view class="card photo-card">
     <view class="section-title">📷 题目照片 *</view>
     
+    <!-- 裁剪比例选择器 -->
+    <view class="crop-scale-section">
+      <view class="crop-scale-label">裁剪比例：</view>
+      <view class="crop-scale-selector" bindtap="toggleCropScaleSelector">
+        <text class="crop-scale-value">{{selectedCropScale === 'free' ? '自由裁剪' : selectedCropScale}}</text>
+        <text class="crop-scale-arrow">▼</text>
+      </view>
+    </view>
+    
+    <!-- 比例选项弹窗 -->
+    <view wx:if="{{showCropScaleSelector}}" class="crop-scale-popup" bindtap="closeCropScaleSelector">
+      <view class="crop-scale-options" catchtap="preventBubble">
+        <view wx:for="{{cropScaleOptions}}" wx:key="value" 
+              class="crop-scale-option {{selectedCropScale === item.value ? 'active' : ''}}"
+              bindtap="selectCropScale"
+              data-value="{{item.value}}">
+          <text class="crop-scale-icon">{{item.icon}}</text>
+          <text class="crop-scale-text">{{item.label}}</text>
+          <text wx:if="{{selectedCropScale === item.value}}" class="crop-scale-check">✓</text>
+        </view>
+      </view>
+    </view>
+    
     <view class="photo-grid">
       <view wx:for="{{photos}}" wx:key="index" class="photo-item">
         <image src="{{item}}" mode="aspectFill" bindtap="previewImage" data-index="{{index}}"/>
