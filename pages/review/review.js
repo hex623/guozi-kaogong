@@ -15,7 +15,17 @@ Page({
     resultIcon: '',
     resultTitle: '',
     resultDesc: '',
-    nextReviewDate: ''
+    nextReviewDate: '',
+    // 复习模式：normal（正常模式）| quick（快速模式）
+    reviewMode: 'normal',
+    // 掌握程度选项
+    masteryLevels: [
+      { level: 1, icon: '😵', label: '完全忘记', desc: '今天再复习', color: '#ff4d4f' },
+      { level: 2, icon: '😰', label: '有点印象', desc: '明天再复习', color: '#ff7a45' },
+      { level: 3, icon: '😐', label: '基本记得', desc: '正常周期', color: '#ffa940' },
+      { level: 4, icon: '😊', label: '比较熟练', desc: '延长周期', color: '#73d13d' },
+      { level: 5, icon: '🎯', label: '完全掌握', desc: '标记掌握', color: '#52c41a' }
+    ]
   },
 
   onLoad() {
@@ -251,4 +261,106 @@ Page({
       imageUrl: '/images/share-cover.png'
     }
   }
+
+
+  // ==================== 多级别掌握程度评估 ====================
+
+  markMasteryLevel(level) {
+    if (this.data.isSubmitting) return
+    this.setData({ isSubmitting: true })
+    
+    const { currentQuestion } = this.data
+    const questions = wx.getStorageSync('questions') || []
+    const index = questions.findIndex(q => q._id === currentQuestion._id)
+    
+    if (index > -1) {
+      const question = questions[index]
+      const nextReviewDays = this.getNextReviewInterval(level, question.reviewCount || 0)
+      
+      question.lastReviewDate = new Date().toISOString()
+      question.lastMasteryLevel = level
+      question.needsMoreReview = level <= 2
+      
+      if (level === 5) {
+        question.reviewCount = (question.reviewCount || 0) + 1
+        if (question.reviewCount >= 5) question.status = 'mastered'
+      } else if (level <= 2) {
+        question.wrongCount = (question.wrongCount || 0) + 1
+      }
+      
+      const nextDate = new Date()
+      nextDate.setDate(nextDate.getDate() + nextReviewDays)
+      question.nextReviewDate = nextDate.toISOString()
+      
+      wx.setStorageSync('questions', questions)
+      
+      const reviewRecords = wx.getStorageSync('review_records') || []
+      const today = new Date().toISOString().split('T')[0]
+      reviewRecords.push({
+        _id: 'r_' + Date.now(),
+        questionId: currentQuestion._id,
+        date: today,
+        completed: true,
+        masteryLevel: level,
+        createTime: Date.now()
+      })
+      wx.setStorageSync('review_records', reviewRecords)
+      
+      const levelInfo = this.data.masteryLevels.find(l => l.level === level)
+      const resultDesc = level === 5 && question.reviewCount >= 5
+        ? '恭喜！你已完成全部5次复习，这道题已标记为已掌握'
+        : levelInfo.label + '，' + levelInfo.desc
+      
+      this.setData({
+        showResult: true,
+        resultIcon: levelInfo.icon,
+        resultTitle: levelInfo.label,
+        resultDesc: resultDesc,
+        nextReviewDate: nextReviewDays === 0 ? '今天' : nextReviewDays + '天后',
+        isSubmitting: false
+      })
+    }
+  },
+
+  getNextReviewInterval(level, reviewCount) {
+    const intervals = { 1: 0, 2: 1 }
+    intervals[3] = [1, 2, 4, 7, 15][reviewCount] || 7
+    intervals[4] = [2, 4, 7, 15, 30][reviewCount] || 15
+    intervals[5] = [4, 7, 15, 30, 60][reviewCount] || 30
+    return intervals[level] || 1
+  },
+
+  // ==================== 快速复习模式 ====================
+  switchReviewMode() {
+    const newMode = this.data.reviewMode === 'normal' ? 'quick' : 'normal'
+    this.setData({ reviewMode: newMode, showAnswer: false, showResult: false })
+    wx.showToast({ title: newMode === 'quick' ? '切换到快速模式' : '切换到正常模式', icon: 'none' })
+  },
+
+  quickMark(level) {
+    this.markMasteryLevel(level)
+    setTimeout(() => {
+      if (this.data.currentIndex < this.data.todayList.length - 1) {
+        this.nextQuestion()
+      } else {
+        this.loadTodayReviewList()
+      }
+    }, 800)
+  },
+
+  // ==================== 重点标记 ====================
+  toggleFavorite() {
+    const { currentQuestion } = this.data
+    if (!currentQuestion) return
+    const questions = wx.getStorageSync('questions') || []
+    const index = questions.findIndex(q => q._id === currentQuestion._id)
+    if (index > -1) {
+      const isFav = !questions[index].isFavorite
+      questions[index].isFavorite = isFav
+      wx.setStorageSync('questions', questions)
+      this.setData({ 'currentQuestion.isFavorite': isFav })
+      wx.showToast({ title: isFav ? '已标记为重点' : '已取消重点', icon: 'none' })
+    }
+  }
+
 })

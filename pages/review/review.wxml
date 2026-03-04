@@ -15,6 +15,18 @@
         </view>
       </view>
     </view>
+    
+    <!-- 模式切换和重点题按钮 -->
+    <view class="header-actions" wx:if="{{todayList.length > 0}}">
+      <view class="mode-switch" bindtap="switchReviewMode">
+        <text class="mode-text">{{reviewMode === 'quick' ? '⚡ 快速模式' : '📚 正常模式'}}</text>
+        <text class="mode-arrow">▸</text>
+      </view>
+      <view class="fav-filter" bindtap="showFavoritesOnly">
+        <text class="fav-icon">⭐</text>
+        <text class="fav-text">重点题</text>
+      </view>
+    </view>
   </view>
 
   <!-- 空状态 -->
@@ -33,6 +45,10 @@
       <view class="question-meta">
         <text class="review-stage">第{{currentQuestion.reviewCount + 1}}次复习</text>
         <text class="question-source" wx:if="{{currentQuestion.source}}">{{currentQuestion.source}}</text>
+        <!-- 重点标记按钮 -->
+        <view class="favorite-btn {{currentQuestion.isFavorite ? 'active' : ''}}" bindtap="toggleFavorite">
+          <text>{{currentQuestion.isFavorite ? '⭐' : '☆'}}</text>
+        </view>
       </view>
       
       <view class="question-tags" wx:if="{{currentQuestion.tags.length > 0}}">
@@ -44,7 +60,7 @@
     <view class="question-images">
       <image wx:for="{{currentQuestion.photos}}" wx:key="*this"
              src="{{item}}" mode="widthFix" 
-             bindtap="previewQuestionImage"
+             bindtap="previewImage"
              data-url="{{item}}"/>
     </view>
 
@@ -54,8 +70,28 @@
       <text class="hint-content">{{currentQuestion.wrongAnswer}}</text>
     </view>
 
-    <!-- 查看答案按钮 -->
-    <view class="action-area" wx:if="{{!showAnswer}}">
+    <!-- 快速模式：直接显示掌握程度选择（不看答案） -->
+    <view wx:if="{{reviewMode === 'quick' && !showAnswer}}" class="quick-mastery-section">
+      <text class="quick-title">快速评估掌握程度</text>
+      <view class="mastery-grid">
+        <view wx:for="{{masteryLevels}}" wx:key="level" 
+              class="mastery-item"
+              style="border-color: {{item.color}}"
+              bindtap="quickMark"
+              data-level="{{item.level}}">
+          <text class="mastery-icon">{{item.icon}}</text>
+          <text class="mastery-label">{{item.label}}</text>
+          <text class="mastery-desc">{{item.desc}}</text>
+        </view>
+      </view>
+      
+      <view class="quick-actions">
+        <button class="btn-secondary btn-small" bindtap="showAnswer">查看答案</button>
+      </view>
+    </view>
+
+    <!-- 正常模式：查看答案按钮 -->
+    <view class="action-area" wx:if="{{reviewMode === 'normal' && !showAnswer}}">
       <button class="btn-primary btn-large" bindtap="showAnswer">
         查看答案
       </button>
@@ -75,23 +111,22 @@
              class="answer-image"
              bindtap="previewAnswerImage"/>
 
-      <!-- 掌握程度选择 -->
+      <!-- 多级别掌握程度选择 -->
       <view class="mastery-section">
         <text class="mastery-title">掌握程度如何？</text>
         
-        <view class="mastery-buttons">
-          <button class="btn-mastery btn-forgot" bindtap="markForgot">
-            <text class="btn-icon">😵</text>
-            <text>还需复习</text>
-            <text class="btn-desc">增加复习频率</text>
-          </button>
-          
-          <button class="btn-mastery btn-mastered" bindtap="markMastered"
-                  disabled="{{isSubmitting}}">
-            <text class="btn-icon">✅</text>
-            <text>已掌握</text>
-            <text class="btn-desc">减少推送频率</text>
-          </button>
+        <view class="mastery-list">
+          <view wx:for="{{masteryLevels}}" wx:key="level"
+                class="mastery-btn"
+                style="background: {{item.color}}"
+                bindtap="markMasteryLevel"
+                data-level="{{item.level}}">
+            <text class="btn-icon">{{item.icon}}</text>
+            <view class="btn-content">
+              <text class="btn-label">{{item.label}}</text>
+              <text class="btn-desc">{{item.desc}}</text>
+            </view>
+          </view>
         </view>
       </view>
     </view>
