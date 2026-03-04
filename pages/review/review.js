@@ -260,8 +260,7 @@ Page({
       path: '/pages/review/review',
       imageUrl: '/images/share-cover.png'
     }
-  }
-
+  },
 
   // ==================== 多级别掌握程度评估 ====================
 
