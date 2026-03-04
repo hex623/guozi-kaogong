@@ -74,7 +74,7 @@
 }
 
 .question-list {
-  padding-bottom: 220rpx;
+  padding-bottom: 320rpx;
 }
 
 .question-item {
@@ -216,13 +216,11 @@
 /* 导出按钮 */
 .export-bar {
   position: fixed;
-  bottom: 100rpx;
   bottom: calc(100rpx + env(safe-area-inset-bottom));
-  left: 0;
-  right: 0;
-  padding: 20rpx 40rpx;
-  background: #ffffff;
-  box-shadow: 0 -4rpx 20rpx rgba(0,0,0,0.05);
+  left: 30rpx;
+  right: 30rpx;
+  padding: 20rpx 0;
+  background: transparent;
   z-index: 100;
 }
 
@@ -235,6 +233,7 @@
   font-size: 30rpx;
   border-radius: 44rpx;
   border: none;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.15);
 }
 
 .export-btn::after {
