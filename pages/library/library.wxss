@@ -74,7 +74,7 @@
 }
 
 .question-list {
-  padding-bottom: 160rpx;
+  padding-bottom: 220rpx;
 }
 
 .question-item {
@@ -216,13 +216,14 @@
 /* 导出按钮 */
 .export-bar {
   position: fixed;
-  bottom: 0;
+  bottom: 100rpx;
+  bottom: calc(100rpx + env(safe-area-inset-bottom));
   left: 0;
   right: 0;
-  padding: 20rpx 40rpx 40rpx;
-  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+  padding: 20rpx 40rpx;
   background: #ffffff;
   box-shadow: 0 -4rpx 20rpx rgba(0,0,0,0.05);
+  z-index: 100;
 }
 
 .export-btn {
