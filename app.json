@@ -2,6 +2,7 @@
   "pages": [
     "pages/index/index",
     "pages/add/add",
+    "pages/ai-search/ai-search",
     "pages/review/review",
     "pages/library/library",
     "pages/profile/profile",

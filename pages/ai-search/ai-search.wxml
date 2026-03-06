@@ -1,0 +1,151 @@
+<!-- pages/ai-search/ai-search.wxml -->
+<view class="container">
+  <!-- 标题栏 -->
+  <view class="header">
+    <text class="title">📷 AI 拍照搜题</text>
+    <text class="subtitle">拍照上传，智能解析</text>
+  </view>
+
+  <!-- 状态 1: 初始状态 -->
+  <view wx:if="{{status === 'idle'}}" class="idle-section">
+    <view class="upload-area" bindtap="takePhoto">
+      <view class="upload-icon">📷</view>
+      <text class="upload-text">点击拍照</text>
+      <text class="upload-subtext">或从相册选择</text>
+    </view>
+
+    <view class="action-buttons">
+      <view class="btn-primary" bindtap="takePhoto">
+        <text>📷 拍照</text>
+      </view>
+      <view class="btn-secondary" bindtap="selectFromAlbum">
+        <text>🖼 相册</text>
+      </view>
+    </view>
+
+    <!-- 使用提示 -->
+    <view class="tips-section">
+      <text class="tips-title">💡 使用提示</text>
+      <view class="tips-list">
+        <text class="tip-item">• 拍摄时对准题目，确保文字清晰</text>
+        <text class="tip-item">• 避免手写字覆盖印刷文字</text>
+        <text class="tip-item">• 光线充足，避免阴影</text>
+        <text class="tip-item">• 支持行测、申论等各类题型</text>
+      </view>
+    </view>
+
+    <!-- 历史记录 -->
+    <view wx:if="{{searchHistory.length > 0}}" class="history-section">
+      <text class="section-title">🕐 最近搜过的题</text>
+      <scroll-view scroll-x class="history-scroll">
+        <view wx:for="{{searchHistory}}" wx:key="id" 
+              class="history-item"
+              bindtap="viewHistoryDetail"
+              data-id="{{item.id}}">
+          <image src="{{item.imageUrl}}" mode="aspectFill" class="history-thumb"/>
+          <text class="history-text">{{item.question}}</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 状态 2: 已选择图片，准备分析 -->
+  <view wx:if="{{status === 'selecting'}}" class="preview-section">
+    <image src="{{imageUrl}}" mode="widthFix" class="preview-image"/>
+    <view class="preview-actions">
+      <view class="btn-secondary" bindtap="retake">重拍</view>
+      <view class="btn-primary" bindtap="analyzeImage">开始识别</view>
+    </view>
+  </view>
+
+  <!-- 状态 3: 分析中 -->
+  <view wx:if="{{status === 'analyzing'}}" class="analyzing-section">
+    <image src="{{imageUrl}}" mode="widthFix" class="analyzing-image"/>
+    
+    <view class="analyzing-animation">
+      <view class="ai-icon">🤖</view>
+      <text class="analyzing-text">AI 正在识别题目...</text>
+      <view class="progress-bar">
+        <view class="progress-fill"></view>
+      </view>
+      <text class="analyzing-subtext">请稍候，大概需要 3-5 秒</text>
+    </view>
+  </view>
+
+  <!-- 状态 4: 显示结果 -->
+  <view wx:if="{{status === 'result'}}" class="result-section">
+    <!-- 原图预览 -->
+    <view class="result-image-wrapper">
+      <image src="{{imageUrl}}" mode="widthFix" class="result-image"/>
+    </view>
+
+    <!-- 识别的题目 -->
+    <view class="result-card">
+      <view class="card-header">
+        <text class="card-icon">📋</text>
+        <text class="card-title">识别出的题目</text>
+      </view>
+      <text class="question-text">{{result.question}}</text>
+    </view>
+
+    <!-- 正确答案 -->
+    <view class="result-card highlight">
+      <view class="card-header">
+        <text class="card-icon">✅</text>
+        <text class="card-title">正确答案</text>
+      </view>
+      <text class="answer-text">{{result.answer}}</text>
+    </view>
+
+    <!-- 详细解析 -->
+    <view class="result-card">
+      <view class="card-header">
+        <text class="card-icon">📖</text>
+        <text class="card-title">详细解析</text>
+      </view>
+      <text class="analysis-text">{{result.analysis}}</text>
+    </view>
+
+    <!-- 知识点 -->
+    <view class="result-card">
+      <view class="card-header">
+        <text class="card-icon">📚</text>
+        <text class="card-title">相关知识点</text>
+      </view>
+      <view class="knowledge-tags">
+        <view wx:for="{{result.knowledgePoints}}" wx:key="*this" class="knowledge-tag">
+          {{item}}
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="result-actions">
+      <view class="btn-primary" bindtap="addToFavorites">
+        <text>⭐ 收藏到错题本</text>
+      </view>
+      <view class="btn-secondary" bindtap="shareAnalysis">
+        <text>📤 分享解析</text>
+      </view>
+      <view class="btn-secondary" bindtap="retake">
+        <text>🔄 再拍一题</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 状态 5: 错误 -->
+  <view wx:if="{{status === 'error'}}" class="error-section">
+    <view class="error-icon">❌</view>
+    <text class="error-title">识别失败</text>
+    <text class="error-message">{{errorMessage}}</text>
+    
+    <view class="error-tips">
+      <text>建议：</text>
+      <text>• 检查网络连接</text>
+      <text>• 重新拍摄，确保文字清晰</text>
+      <text>• 尝试裁剪掉无关内容</text>
+    </view>
+
+    <view class="btn-primary" bindtap="retake">重新拍照</view>
+  </view>
+</view>
